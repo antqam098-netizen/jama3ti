@@ -1,0 +1,94 @@
+# ملف codemagic.yaml
+# هذا الملف يحدد خطوات البناء والنشر لتطبيق Flutter على Codemagic.
+
+workflows:
+  android-build:
+    name: Android Build
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: latest
+      java: 17 # تأكد من أن هذا يتوافق مع متطلبات مشروعك
+      vars:
+        # قم بتعريف متغيرات البيئة هنا، مثل مفاتيح API أو بيانات الاعتماد
+        # FLUTTER_CHANNEL: stable
+        # FLUTTER_VERSION: 3.24.5 # يمكنك تحديد إصدار Flutter هنا
+
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: master
+          include: true
+        - pattern: develop
+          include: true
+        - pattern: feature/*
+          include: true
+
+    scripts:
+      - name: Set up Flutter
+        script: | 
+          flutter channel stable
+          flutter upgrade
+          flutter doctor
+
+      - name: Get Flutter dependencies
+        script: | 
+          flutter pub get
+
+      - name: Build Android Release
+        script: | 
+          flutter build apk --release
+
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/**/*.aab
+
+    publishing:
+      # يمكنك إضافة إعدادات النشر هنا، مثل Google Play Store أو Firebase App Distribution
+      # example:
+      #   google_play:
+      #     service_account_key: ENCRYPTED_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY
+      #     track: production
+      #     in_app_update_priority: 0
+      #     release_notes:
+      #       - language: en-US
+      #         text: "Initial release."
+      #       - language: ar-AR
+      #         text: "الإصدار الأولي."
+
+  # يمكنك إضافة سير عمل آخر لـ iOS إذا كنت تخطط لدعم iOS
+  # ios-build:
+  #   name: iOS Build
+  #   max_build_duration: 60
+  #   environment:
+  #     flutter: stable
+  #     xcode: latest
+  #     cocoapods: latest
+  #   triggering:
+  #     events:
+  #       - push
+  #       - pull_request
+  #     branch_patterns:
+  #       - pattern: master
+  #         include: true
+  #   scripts:
+  #     - name: Set up Flutter
+  #       script: | 
+  #         flutter channel stable
+  #         flutter upgrade
+  #         flutter doctor
+  #     - name: Get Flutter dependencies
+  #       script: | 
+  #         flutter pub get
+  #     - name: Install CocoaPods
+  #       script: | 
+  #         cd ios && pod install --repo-update
+  #     - name: Build iOS Release
+  #       script: | 
+  #         flutter build ios --release --no-codesign
+  #   artifacts:
+  #     - build/ios/ipa/*.ipa
+
