@@ -6,15 +6,12 @@ workflows:
     environment:
       flutter: stable
       vars:
-        # If you want Codemagic to decode and use a keystore provided as base64:
-        ANDROID_KEYSTORE_BASE64:
-          encrypted: false
-        ANDROID_KEYSTORE_PASSWORD:
-          encrypted: false
-        ANDROID_KEY_ALIAS:
-          encrypted: false
-        ANDROID_KEY_PASSWORD:
-          encrypted: false
+        # Put real values in the Codemagic UI (recommended) or replace the empty strings below.
+        # For a keystore: base64-encode it locally and paste the base64 string into ANDROID_KEYSTORE_BASE64
+        ANDROID_KEYSTORE_BASE64: ""
+        ANDROID_KEYSTORE_PASSWORD: ""
+        ANDROID_KEY_ALIAS: ""
+        ANDROID_KEY_PASSWORD: ""
     scripts:
       - name: Setup keystore (if provided)
         script: |
@@ -33,4 +30,3 @@ workflows:
         script: flutter build apk --release --no-shrink
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
-   
